@@ -1,7 +1,9 @@
-import Image from "next/image";
+import Navbar from "@/app/Components/nav-bar/navbar";
 
 export default function Home() {
   return (
-    <div className="popins"> this is a home page</div>
+    <main className="min-h-screen bg-background">
+      <Navbar />
+    </main>
   );
 }
