@@ -7,7 +7,7 @@ export default function NewStitchButton() {
   const { openAddDialog } = useWorkshop();
   return (
     <Button onClick={openAddDialog} className="h-10 rounded-full px-5 shadow-none">
-      + New Stitch
+      + New Project
     </Button>
   );
 }

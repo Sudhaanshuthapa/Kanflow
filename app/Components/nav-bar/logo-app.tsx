@@ -6,7 +6,7 @@ export default function AppNameAndLogo() {
       <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
         <Scissors className="size-5" />
       </div>
-      <span className="text-xl font-bold tracking-tight">Stitch</span>
+      <span className="text-xl font-bold tracking-tight">Kanflow</span>
     </div>
   );
 }
