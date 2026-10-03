@@ -56,7 +56,7 @@ export const PRIORITY_TO_TAG: Record<Priority, TaskTag> = {
   High: "Urgent",
 };
 
-export const projects: Project[] = [
+const seedProjects: Project[] = [
   {
     id: "autumn",
     name: "Autumn Collection '26",
@@ -85,6 +85,9 @@ type DialogState = { open: boolean; editing: Task | null };
 type WorkshopContextValue = {
   tasks: Task[];
   projects: Project[];
+  addProject: (name: string) => void;
+  projectDialogOpen: boolean;
+  setProjectDialogOpen: (open: boolean) => void;
   activeProject: Project;
   /** Live stats for the active project, derived from its tasks. */
   stats: ProjectStats;
@@ -104,7 +107,9 @@ const WorkshopContext = React.createContext<WorkshopContextValue | null>(null);
 
 export function WorkshopProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = React.useState<Task[]>(seedTasks);
-  const [activeProjectId, setActiveProjectId] = React.useState(projects[0].id);
+  const [projects, setProjects] = React.useState<Project[]>(seedProjects);
+  const [projectDialogOpen, setProjectDialogOpen] = React.useState(false);
+  const [activeProjectId, setActiveProjectId] = React.useState(seedProjects[0].id);
   const [sortOrder, setSortOrder] = React.useState<SortOrder>("A-Z");
   const [dialog, setDialog] = React.useState<DialogState>({ open: false, editing: null });
 
@@ -113,6 +118,13 @@ export function WorkshopProvider({ children }: { children: React.ReactNode }) {
     () => computeStats(tasks.filter((t) => t.projectId === activeProject.id)),
     [tasks, activeProject.id]
   );
+
+  const addProject = (name: string) => {
+    const project: Project = { id: crypto.randomUUID(), name };
+    setProjects((prev) => [...prev, project]);
+    setActiveProjectId(project.id);
+    setProjectDialogOpen(false);
+  };
 
   const saveTask: WorkshopContextValue["saveTask"] = (data) => {
     const editing = dialog.editing;
@@ -142,6 +154,9 @@ export function WorkshopProvider({ children }: { children: React.ReactNode }) {
   const value: WorkshopContextValue = {
     tasks,
     projects,
+    addProject,
+    projectDialogOpen,
+    setProjectDialogOpen,
     activeProject,
     stats,
     setActiveProjectId,
