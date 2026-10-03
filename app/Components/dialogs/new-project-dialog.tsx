@@ -36,7 +36,7 @@ function ProjectForm() {
           <FolderPlus className="size-5 text-muted-foreground" />
         </div>
         <div className="flex flex-col">
-          <DialogTitle>New Stitch</DialogTitle>
+          <DialogTitle>New Project</DialogTitle>
           <DialogDescription>Create a new workshop project to organise your orders</DialogDescription>
         </div>
       </DialogHeader>

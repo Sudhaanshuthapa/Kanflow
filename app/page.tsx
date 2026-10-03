@@ -2,6 +2,7 @@ import Navbar from "@/app/Components/nav-bar/navbar";
 import ProjectsArea from "@/app/Components/projects-area/project-area";
 import RightSideBar from "@/app/Components/right-sidebar/right-sidebar";
 import AddTaskDialog from "@/app/Components/dialogs/add-task-dialog";
+import NewProjectDialog from "@/app/Components/dialogs/new-project-dialog";
 import { WorkshopProvider } from "@/app/Components/workshop-context";
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
           <RightSideBar />
         </div>
         <AddTaskDialog />
+        <NewProjectDialog />
       </main>
     </WorkshopProvider>
   );
