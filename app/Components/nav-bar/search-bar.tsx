@@ -1,18 +1,13 @@
-"use client";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useTheme } from "next-themes";
-import { IoSearch } from "react-icons/io5";
 
 export default function SearchBar() {
-  const { theme } = useTheme();
-
-  const bgColor = theme === "dark" ? "bg-transparent" : "bg-white";
   return (
-    <div className="relative">
-      <IoSearch className="absolute text-2xl left-3 top-2 text-gray-400" />
+    <div className="relative w-72">
+      <Search className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
       <Input
-        className={`${bgColor} rounded-3xl h-10 pl-11 shadow-none`}
-        placeholder="Search..."
+        className="h-10 rounded-full border-transparent bg-white pl-10 shadow-none dark:bg-input/30"
+        placeholder="Search patterns, orders..."
       />
     </div>
   );

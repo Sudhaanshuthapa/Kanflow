@@ -1,17 +1,12 @@
-import { FaProjectDiagram } from "react-icons/fa";
+import { Scissors } from "lucide-react";
 
 export default function AppNameAndLogo() {
   return (
     <div className="flex items-center gap-2">
-      {/* Logo */}
-      <div className="bg-primary size-10 text-lg text-white rounded-xl flex justify-center items-center">
-        <FaProjectDiagram />
+      <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+        <Scissors className="size-5" />
       </div>
-      {/* container for the name */}
-      <div className="flex gap-1 items-center text-xl">
-        <span className="text-xl font-bold">Pro</span>
-        <span className="text-xl">KanBan</span>
-      </div>
+      <span className="text-xl font-bold tracking-tight">Kanflow</span>
     </div>
   );
 }
