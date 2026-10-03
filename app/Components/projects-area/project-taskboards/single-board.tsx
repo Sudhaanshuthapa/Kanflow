@@ -1,55 +1,65 @@
 "use client";
 
-import { useDraggable } from "@dnd-kit/core";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import TasksDropDown from "../../drop-downs/tasks-drop-down";
-import { Task, TaskTag } from "../../workshop-context";
+import { useDroppable } from "@dnd-kit/core";
+import { GiYarn } from "react-icons/gi";
+import { Task } from "../../workshop-context";
+import SingleTask from "./single-task";
 
-const TAG_STYLES: Record<TaskTag, string> = {
-  Custom: "bg-yellow-100 text-yellow-800 dark:bg-yellow-400/15 dark:text-yellow-300",
-  Repair: "bg-blue-100 text-blue-800 dark:bg-blue-400/15 dark:text-blue-300",
-  Urgent: "bg-orange-100 text-orange-800 dark:bg-orange-400/15 dark:text-orange-300",
-  Standard: "bg-sky-100 text-sky-800 dark:bg-sky-400/15 dark:text-sky-300",
+export type Board = {
+  id: "queue" | "needle" | "done";
+  name: string;
+  color: "blue" | "orange" | "purple";
 };
 
-/** Presentational card, also used inside the DragOverlay. */
-export function TaskCard({ task, className, ...props }: { task: Task } & React.ComponentProps<typeof Card>) {
-  return (
-    <Card className={cn("gap-2 border-2 border-dashed bg-card py-3 shadow-none", className)} {...props}>
-      <CardHeader className="px-4">
-        <div className="flex items-center justify-between">
-          <span className={`rounded-full px-3 py-1 text-xs font-medium ${TAG_STYLES[task.tag]}`}>
-            # {task.tag}
-          </span>
-          {/* keep the menu usable: don't let it start a drag */}
-          <div
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            onKeyDown={(e) => e.stopPropagation()}
-          >
-            <TasksDropDown task={task} />
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-1.5">
-        <span className="text-base font-semibold">{task.title}</span>
-        <span className="text-sm text-muted-foreground">{task.description}</span>
-      </CardContent>
-    </Card>
-  );
-}
+// Full class names are listed so Tailwind can detect them.
+const HEADER_STYLES: Record<Board["color"], { header: string; badge: string }> = {
+  blue: {
+    header: "bg-blue-50 text-blue-900 dark:bg-blue-500/15 dark:text-blue-100",
+    badge: "bg-blue-500 text-white",
+  },
+  orange: {
+    header: "bg-orange-50 text-orange-900 dark:bg-orange-500/15 dark:text-orange-100",
+    badge: "bg-orange-500 text-white",
+  },
+  purple: {
+    header: "bg-purple-50 text-purple-900 dark:bg-purple-500/15 dark:text-purple-100",
+    badge: "bg-purple-500 text-white",
+  },
+};
 
-export default function SingleTask({ task }: { task: Task }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: task.id });
+export default function SingleBoard({ board, tasks }: { board: Board; tasks: Task[] }) {
+  const styles = HEADER_STYLES[board.color];
+  const { setNodeRef, isOver } = useDroppable({ id: board.id });
 
   return (
-    <TaskCard
+    <section
       ref={setNodeRef}
-      task={task}
-      className={cn("cursor-grab touch-manipulation active:cursor-grabbing", isDragging && "opacity-40")}
-      {...attributes}
-      {...listeners}
-    />
+      className={`flex min-h-80 flex-col gap-4 rounded-3xl p-2 transition-colors ${
+        isOver ? "bg-primary/5 ring-2 ring-primary/30 ring-dashed" : ""
+      }`}
+    >
+      <div className={`flex items-center justify-between rounded-2xl px-4 py-3 ${styles.header}`}>
+        <h2 className="text-sm font-semibold">{board.name}</h2>
+        <span className={`flex size-6 items-center justify-center rounded-full text-xs font-semibold ${styles.badge}`}>
+          {tasks.length}
+        </span>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-3">
+        {tasks.map((task) => (
+          <SingleTask key={task.id} task={task} />
+        ))}
+
+        {tasks.length === 0 && board.id === "done" && (
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-10 text-center text-muted-foreground">
+            <GiYarn className="size-12 text-purple-300 dark:text-purple-400/60" />
+            <p className="text-sm">No orders completed today!</p>
+          </div>
+        )}
+        {tasks.length === 0 && board.id !== "done" && (
+          <p className="py-10 text-center text-sm text-muted-foreground">No tasks here yet</p>
+        )}
+      </div>
+    </section>
   );
 }

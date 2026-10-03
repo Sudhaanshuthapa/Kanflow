@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { ArrowDownAZ, ArrowUpZA } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,37 +8,33 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IoMdArrowDown, IoMdArrowUp } from "react-icons/io";
+import { SortOrder, useWorkshop } from "../workshop-context";
 
-const OPTIONS = ["A-Z", "Z-A"];
+const OPTIONS: SortOrder[] = ["A-Z", "Z-A"];
 
 export function SortingDropDown() {
-  const [selectedOption, setSelectedOption] = React.useState("A-Z");
+  const { sortOrder, setSortOrder } = useWorkshop();
+  const Icon = sortOrder === "A-Z" ? ArrowDownAZ : ArrowUpZA;
 
   return (
     <DropdownMenu>
-      {/* Trigger Button */}
-      <DropdownMenuTrigger>
-        <Button variant="ghost" type="button">
-          <span className="font-medium text-sm">{selectedOption}</span>
-          {selectedOption === "A-Z" ? (
-            <IoMdArrowDown className="text-sm" />
-          ) : (
-            <IoMdArrowUp className="text-sm" />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-
-      {/* Options Menu */}
-      <DropdownMenuContent className="w-20 poppins">
-        {OPTIONS.map((option, index) => (
+      <DropdownMenuTrigger
+        render={
+          <Button variant="ghost" type="button" className="h-9 gap-2 rounded-full px-3 text-muted-foreground">
+            <Icon className="size-4" />
+            <span className="text-sm font-medium">{sortOrder} Sort</span>
+          </Button>
+        }
+      />
+      <DropdownMenuContent align="end" className="min-w-36">
+        {OPTIONS.map((option) => (
           <DropdownMenuCheckboxItem
-            key={index}
+            key={option}
             className="h-9"
-            checked={selectedOption === option}
-            onCheckedChange={() => setSelectedOption(option)}
+            checked={sortOrder === option}
+            onCheckedChange={() => setSortOrder(option)}
           >
-            {option}
+            {option} Sort
           </DropdownMenuCheckboxItem>
         ))}
       </DropdownMenuContent>

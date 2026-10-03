@@ -1,33 +1,55 @@
+"use client";
+
+import { useDraggable } from "@dnd-kit/core";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-
-import { MdKeyboardDoubleArrowDown } from "react-icons/md";
+import { cn } from "@/lib/utils";
 import TasksDropDown from "../../drop-downs/tasks-drop-down";
+import { Task, TaskTag } from "../../workshop-context";
 
-export default function SingleTask() {
+const TAG_STYLES: Record<TaskTag, string> = {
+  Custom: "bg-yellow-100 text-yellow-800 dark:bg-yellow-400/15 dark:text-yellow-300",
+  Repair: "bg-blue-100 text-blue-800 dark:bg-blue-400/15 dark:text-blue-300",
+  Urgent: "bg-orange-100 text-orange-800 dark:bg-orange-400/15 dark:text-orange-300",
+  Standard: "bg-sky-100 text-sky-800 dark:bg-sky-400/15 dark:text-sky-300",
+};
+
+/** Presentational card, also used inside the DragOverlay. */
+export function TaskCard({ task, className, ...props }: { task: Task } & React.ComponentProps<typeof Card>) {
   return (
-    <Card className="shadow-none">
-      {/* single task header */}
-      <CardHeader className="p-4 ">
-        <div className="flex justify-between items-center">
-          {/* priority container */}
+    <Card className={cn("gap-2 border-2 border-dashed bg-card py-3 shadow-none", className)} {...props}>
+      <CardHeader className="px-4">
+        <div className="flex items-center justify-between">
+          <span className={`rounded-full px-3 py-1 text-xs font-medium ${TAG_STYLES[task.tag]}`}>
+            # {task.tag}
+          </span>
+          {/* keep the menu usable: don't let it start a drag */}
           <div
-            className="p-1 py-[4px] bg-green-500/15 rounded-3xl px-2 pr-4 font-medium text-green-900 flex items-center gap-1 text-sm"
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
           >
-            {/* priority icon */}
-            <MdKeyboardDoubleArrowDown className="mb-[2px]" />
-            {/* priority */}
-            <span className="text-[12px]">Low</span>
+            <TasksDropDown task={task} />
           </div>
-          {/* more options drop down */}
-          <TasksDropDown />
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 mt-1">
-        <span className="font-bold text-lg">Copywriteing content</span>
-        <span className="text-sm text-gray-600">
-          Create content for a client today every day
-        </span>
+      <CardContent className="flex flex-col gap-1.5">
+        <span className="text-base font-semibold">{task.title}</span>
+        <span className="text-sm text-muted-foreground">{task.description}</span>
       </CardContent>
     </Card>
   );
-}---
+}
+
+export default function SingleTask({ task }: { task: Task }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: task.id });
+
+  return (
+    <TaskCard
+      ref={setNodeRef}
+      task={task}
+      className={cn("cursor-grab touch-manipulation active:cursor-grabbing", isDragging && "opacity-40")}
+      {...attributes}
+      {...listeners}
+    />
+  );
+}

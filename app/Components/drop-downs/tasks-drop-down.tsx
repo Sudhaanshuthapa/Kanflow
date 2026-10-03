@@ -1,62 +1,37 @@
 "use client";
 
-import { FaRegEdit } from "react-icons/fa";
-import { MdOutlineDelete } from "react-icons/md";
-
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Task, useWorkshop } from "../workshop-context";
 
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
-import { JSX } from "react/jsx-runtime";
+export default function TasksDropDown({ task }: { task: Task }) {
+  const { openEditDialog, deleteTask } = useWorkshop();
 
-type MenuItem = {
-  icon: JSX.Element;
-  label: string;
-  className: string;
-  separator?: undefined;
-};
-
-export default function TasksDropDown() {
-  const menuItems: MenuItem[] = [
-    { icon: <FaRegEdit />, label: "Edit Task", className: "" },
-
-    {
-      icon: <MdOutlineDelete className="text-lg" />,
-      label: "Delete Task",
-      className: "text-red-600",
-    },
-  ];
   return (
-    <div>
-      <DropdownMenu>
-        {/* Trigger drop down which is the more icon */}
-        <DropdownMenuTrigger>
-          <Button variant="ghost" className="h-8 w-8 p-0" type="button">
-            <MoreHorizontal className="h-4 w-4" />
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="ghost" size="icon-sm" type="button" aria-label="Task options">
+            <MoreHorizontal className="size-4" />
           </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="poppins">
-          {menuItems.map((item, index) =>
-            item.separator ? (
-              <DropdownMenuSeparator key={index} />
-            ) : (
-              <DropdownMenuItem
-                key={index}
-                className={`flex items-center gap-1 p-[10px] ${item.className}`}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </DropdownMenuItem>
-            )
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+        }
+      />
+      <DropdownMenuContent align="end" className="min-w-40">
+        <DropdownMenuItem className="gap-2 p-2.5" onClick={() => openEditDialog(task)}>
+          <Pencil className="size-4" />
+          <span>Edit Task</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="gap-2 p-2.5 text-red-600" onClick={() => deleteTask(task.id)}>
+          <Trash2 className="size-4" />
+          <span>Delete Task</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
